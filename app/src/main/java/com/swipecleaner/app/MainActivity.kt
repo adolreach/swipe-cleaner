@@ -3,14 +3,19 @@ package com.swipecleaner.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.swipecleaner.app.data.UserPreferences
 import com.swipecleaner.app.ui.screens.PermissionsGate
 import com.swipecleaner.app.ui.screens.SettingsScreen
 import com.swipecleaner.app.ui.screens.SwipeScreen
@@ -24,34 +29,44 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val prefs by app.container.preferencesRepository.preferences
-                .collectAsStateWithLifecycle(initialValue = com.swipecleaner.app.data.UserPreferences())
+                .collectAsState(initial = UserPreferences())
 
             SwipeCleanerTheme(themeMode = prefs.themeMode) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     PermissionsGate {
-                        AppNav()
+                        val nav = rememberNavController()
+                        NavHost(
+                            navController = nav,
+                            startDestination = "swipe",
+                            enterTransition = {
+                                slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+                            },
+                            exitTransition = {
+                                slideOutHorizontally(targetOffsetX = { -it / 3 }) + fadeOut()
+                            },
+                            popEnterTransition = {
+                                slideInHorizontally(initialOffsetX = { -it / 3 }) + fadeIn()
+                            },
+                            popExitTransition = {
+                                slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+                            }
+                        ) {
+                            composable("swipe") {
+                                SwipeScreen(
+                                    onOpenSettings = { nav.navigate("settings") },
+                                    onOpenTrash = { nav.navigate("trash") }
+                                )
+                            }
+                            composable("trash") {
+                                TrashScreen(onBack = { nav.popBackStack() })
+                            }
+                            composable("settings") {
+                                SettingsScreen(onBack = { nav.popBackStack() })
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
-}
-
-@androidx.compose.runtime.Composable
-private fun AppNav() {
-    val nav = rememberNavController()
-    NavHost(navController = nav, startDestination = "swipe") {
-        composable("swipe") {
-            SwipeScreen(
-                onOpenSettings = { nav.navigate("settings") },
-                onOpenTrash = { nav.navigate("trash") }
-            )
-        }
-        composable("trash") {
-            TrashScreen(onBack = { nav.popBackStack() })
-        }
-        composable("settings") {
-            SettingsScreen(onBack = { nav.popBackStack() })
         }
     }
 }
