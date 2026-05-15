@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,9 +45,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.swipecleaner.app.data.SwipeRecord
 import com.swipecleaner.app.ui.viewmodel.TrashViewModel
 import com.swipecleaner.app.utils.Formatters
 import kotlinx.coroutines.launch
@@ -55,8 +58,9 @@ import java.io.File
 @Composable
 fun TrashScreen(onBack: () -> Unit) {
     val vm: TrashViewModel = viewModel(factory = TrashViewModel.Factory)
-    val state by vm.state.collectAsStateWithLifecycle()
+    val state by vm.state.collectAsState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     var showConfirm by remember { mutableStateOf(false) }
 
     val deleteLauncher = rememberLauncherForActivityResult(
@@ -72,7 +76,7 @@ fun TrashScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Papelera (${state.items.size})") },
+                title = { Text("Papelera (" + state.items.size + ")") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Volver")
@@ -86,9 +90,9 @@ fun TrashScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            val totalBytes = state.items.sumOf { it.sizeBytes }
+            val totalBytes = state.items.sumOf { rec -> rec.sizeBytes }
             Text(
-                "Espacio a liberar: ${Formatters.bytesToHuman(totalBytes)}",
+                "Espacio a liberar: " + Formatters.bytesToHuman(totalBytes),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(16.dp)
             )
@@ -108,15 +112,19 @@ fun TrashScreen(onBack: () -> Unit) {
                         .weight(1f)
                         .padding(horizontal = 8.dp)
                 ) {
-                    items(state.items, key = { it.mediaId }) { rec ->
+                    items(items = state.items, key = { rec -> rec.mediaId }) { rec ->
                         Box(
                             Modifier
                                 .padding(4.dp)
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(8.dp))
                         ) {
+                            val imageData = rec.trashUri?.let { path -> File(path) }
                             AsyncImage(
-                                model = rec.trashUri?.let { File(it) },
+                                model = ImageRequest.Builder(context)
+                                    .data(imageData)
+                                    .crossfade(true)
+                                    .build(),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
@@ -144,7 +152,7 @@ fun TrashScreen(onBack: () -> Unit) {
                     OutlinedButton(onClick = onBack) { Text("Seguir revisando") }
                     Button(
                         onClick = { showConfirm = true },
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error
                         )
                     ) {
@@ -162,7 +170,7 @@ fun TrashScreen(onBack: () -> Unit) {
             title = { Text("Eliminar definitivamente") },
             text = {
                 Text(
-                    "Se eliminarán ${state.items.size} fotos de tu galería de forma permanente. " +
+                    "Se eliminarán " + state.items.size + " fotos de tu galería de forma permanente. " +
                     "Android te pedirá una confirmación adicional."
                 )
             },
@@ -174,7 +182,6 @@ fun TrashScreen(onBack: () -> Unit) {
                         if (sender != null) {
                             deleteLauncher.launch(IntentSenderRequest.Builder(sender).build())
                         } else {
-                            // Fallback Android <11: borrar uno a uno
                             vm.onDeleteConfirmed()
                         }
                     }
