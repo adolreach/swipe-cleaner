@@ -30,14 +30,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.swipecleaner.app.data.ThemeMode
 import com.swipecleaner.app.ui.viewmodel.SettingsViewModel
@@ -46,7 +47,7 @@ import com.swipecleaner.app.ui.viewmodel.SettingsViewModel
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
     val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
-    val state by vm.state.collectAsStateWithLifecycle()
+    val state by vm.state.collectAsState()
     var showResetKeptDialog by remember { mutableStateOf(false) }
     var showResetAllDialog by remember { mutableStateOf(false) }
     var albumMenuExpanded by remember { mutableStateOf(false) }
@@ -72,7 +73,6 @@ fun SettingsScreen(onBack: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Tema
             SectionTitle("Apariencia")
             ThemeMode.values().forEach { mode ->
                 Row(
@@ -95,7 +95,6 @@ fun SettingsScreen(onBack: () -> Unit) {
 
             Divider()
 
-            // Reaparición
             SectionTitle("Reaparición de fotos conservadas")
             val months = (state.prefs.reappearAfterMillis / (30L * 24L * 60L * 60L * 1000L)).toInt()
                 .coerceIn(1, 24)
@@ -105,17 +104,16 @@ fun SettingsScreen(onBack: () -> Unit) {
             )
             Slider(
                 value = months.toFloat(),
-                onValueChange = { vm.setReappearMonths(it.toInt()) },
+                onValueChange = { value -> vm.setReappearMonths(value.toInt()) },
                 valueRange = 1f..24f,
                 steps = 22
             )
 
             Divider()
 
-            // Álbum
             SectionTitle("Álbum/Carpeta")
-            val currentAlbumName = state.albums.firstOrNull {
-                it.bucketId == state.prefs.selectedBucketId
+            val currentAlbumName = state.albums.firstOrNull { album ->
+                album.bucketId == state.prefs.selectedBucketId
             }?.name ?: "Todos los álbumes"
             OutlinedButton(
                 onClick = { albumMenuExpanded = true },
@@ -136,7 +134,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 )
                 state.albums.forEach { album ->
                     DropdownMenuItem(
-                        text = { Text("${album.name} (${album.count})") },
+                        text = { Text(album.name + " (" + album.count + ")") },
                         onClick = {
                             vm.setBucket(album.bucketId)
                             albumMenuExpanded = false
@@ -147,7 +145,6 @@ fun SettingsScreen(onBack: () -> Unit) {
 
             Divider()
 
-            // Acciones destructivas
             SectionTitle("Reiniciar")
             Button(
                 onClick = { showResetKeptDialog = true },
@@ -171,7 +168,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
         }
     }
