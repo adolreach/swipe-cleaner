@@ -1,92 +1,96 @@
-# SwipeCleaner
+# SwipeCleaner 📱🧹
 
-Aplicación Android para limpiar fotos de la galería mediante un sistema tipo Tinder: deslizar a la derecha para conservar, a la izquierda para enviar a una papelera interna.
+**Limpia las fotos basura de tu móvil de forma rápida e interactiva.**
 
-## Características
+SwipeCleaner te muestra tus fotos una a una. Desliza a la derecha para conservarla, desliza a la izquierda para enviarla a la papelera. Cuando quieras, vacías la papelera y las fotos se eliminan definitivamente de tu galería. Sin complicaciones.
 
-- Swipe a la derecha = conservar (no volverá a aparecer durante X meses, configurable)
-- Swipe a la izquierda = mover a papelera interna (no toca el original todavía)
-- Papelera interna con vista en cuadrícula y borrado en lote con una única confirmación
-- Modo claro / oscuro / sistema
-- Filtro por álbum o carpeta
+---
+
+## Descarga e instalación
+
+### Paso 1 — Descarga el APK
+
+Ve a la sección **[Releases](../../releases)** de este repositorio (columna derecha de la página principal) y descarga el archivo `app-debug.apk` de la última versión disponible.
+
+> Si no ves la sección Releases, ve directamente a:
+> `https://github.com/adolreach/swipe-cleaner/releases`
+
+### Paso 2 — Envía el APK a tu móvil Android
+
+Puedes hacerlo de varias formas:
+- Descárgalo directamente desde el navegador de tu móvil
+- Envíatelo por Telegram, WhatsApp o correo electrónico
+- Súbelo a Google Drive y ábrelo desde allí
+- Transfiérelo por cable USB
+
+### Paso 3 — Instala la app
+
+1. Abre el archivo `.apk` desde tu móvil.
+2. Android mostrará un aviso de seguridad: **"Instalar aplicaciones de fuentes desconocidas"**. Esto es normal para cualquier app que no venga de Google Play. Pulsa **"Ajustes"** y activa el permiso para la app desde la que estás abriendo el archivo (navegador, Telegram, etc.).
+3. Vuelve atrás y pulsa **"Instalar"**.
+4. Listo. SwipeCleaner aparecerá en tu pantalla de inicio.
+
+> ⚠️ **Requisito mínimo:** Android 8.0 o superior.
+
+---
+
+## Cómo funciona
+
+Al abrir la app por primera vez, pedirá permiso para acceder a tus fotos. Es imprescindible para que funcione; la app no sube ningún dato a internet.
+
+| Gesto | Acción |
+|---|---|
+| Deslizar a la **derecha** (o botón verde ♥) | Conservar la foto — no volverá a aparecer en un tiempo |
+| Deslizar a la **izquierda** (o botón rojo ✕) | Enviar a la papelera interna |
+| Botón central ↩ | Deshacer el último swipe |
+
+### La papelera interna
+
+Cuando deslizas una foto a la izquierda, **no se elimina inmediatamente**. Se mueve a una papelera interna dentro de la app. El original sigue en tu galería hasta que tú decidas vaciarlo. Para hacerlo, pulsa el icono de papelera en la barra superior y luego **"Vaciar papelera"**. Android mostrará un único diálogo de confirmación para todas las fotos a la vez, y solo entonces se borran definitivamente.
+
+Esto sirve como red de seguridad: si te arrepientes de haber mandado una foto a la papelera, puedes restaurarla antes de vaciarla.
+
+---
+
+## Funcionalidades
+
+- Swipe interactivo con animación física (como Tinder)
+- Papelera interna con vista en cuadrícula y opción de restaurar
 - Contador de espacio realmente liberado
-- Botón de "deshacer último swipe"
-- Soporte desde Android 8 (API 26) hasta Android 14 (API 34)
+- Las fotos conservadas reaparecen automáticamente pasados X meses (configurable)
+- Filtro por álbum o carpeta
+- Modo claro / oscuro / seguir el sistema
+- Botón de deshacer el último swipe
+- Compatible con Android 8 a Android 14
 
-## Cómo compilar el APK sin instalar Android Studio (vía GitHub Actions)
-
-### Paso 1 — Crear cuenta en GitHub
-
-Vete a https://github.com y regístrate gratuitamente.
-
-### Paso 2 — Crear un repositorio nuevo
-
-Pulsa el botón "+" arriba a la derecha → "New repository". Ponle un nombre (ej. `swipe-cleaner`), márcalo como **público** (los privados tienen un cupo de minutos al mes; el público es ilimitado para Actions) y créalo.
-
-### Paso 3 — Subir el proyecto
-
-Descarga el `.zip` con todo el código y descomprímelo. En tu repositorio recién creado, pulsa "Add file" → "Upload files" y arrastra **el contenido** de la carpeta (no la carpeta en sí). Asegúrate de incluir la carpeta oculta `.github/` (en algunos sistemas las carpetas que empiezan por punto se ocultan; en Windows actívalo en "Ver → Elementos ocultos"; en Mac, `Cmd+Shift+.`).
-
-Confirma el commit con "Commit changes".
-
-### Paso 4 — Esperar a la compilación
-
-Ve a la pestaña "Actions" del repositorio. Verás una ejecución en curso con un círculo amarillo girando. Tardará entre 5 y 10 minutos la primera vez (las siguientes mucho menos, gracias al caché).
-
-Cuando aparezca la marca verde, abre esa ejecución y baja hasta el apartado "Artifacts". Allí estará `SwipeCleaner-debug-apk`. Descárgalo (es un `.zip`); dentro encontrarás `app-debug.apk`.
-
-### Paso 5 — Instalar en el móvil
-
-1. Envía el `.apk` a tu móvil (Telegram, correo, Google Drive, cable USB...).
-2. Ábrelo desde el móvil.
-3. Android pedirá habilitar "Instalar aplicaciones desconocidas" para la app desde la que lo abres. Concédelo solo para esta ocasión.
-4. Pulsa "Instalar".
-
-Ya tienes SwipeCleaner instalada.
+---
 
 ## Permisos que solicita la app
 
-- `READ_MEDIA_IMAGES` (Android 13+) o `READ_EXTERNAL_STORAGE` (Android 12 y anteriores): para leer las fotos de tu galería.
+| Permiso | Para qué se usa |
+|---|---|
+| Acceso a fotos (`READ_MEDIA_IMAGES`) | Mostrar tus fotos en pantalla |
 
-La app NO sube nada a internet. Toda la lógica corre en local.
+La app **no tiene acceso a internet**, no recopila datos y no requiere cuenta de ningún tipo.
 
-## Estrategia de eliminación (importante)
+---
 
-Por las restricciones de Scoped Storage de Android, una aplicación NO puede borrar fotos del MediaStore sin que el sistema muestre un diálogo de confirmación. Para que el flujo de swipe sea fluido, la app:
+## Preguntas frecuentes
 
-1. Al hacer swipe-izquierda, **copia** la foto a una carpeta privada interna (`Android/data/.../files/trash/`). Esto NO requiere diálogo.
-2. La foto aparece en la pantalla de Papelera.
-3. Cuando el usuario decide "Vaciar papelera", Android muestra **un único diálogo** para confirmar el borrado de todos los originales a la vez (mediante `MediaStore.createDeleteRequest`).
+**¿Puedo desinstalarla sin perder mis fotos?**
+Sí. Si desinstallas la app antes de vaciar la papelera, las fotos que habías marcado para eliminar siguen en tu galería intactas. Solo se borran cuando tú pulsas "Vaciar papelera" y confirmas el diálogo del sistema.
 
-Esto preserva la fluidez del swipe y ofrece una red de seguridad: nada se borra realmente hasta que tú lo confirmes.
+**¿Por qué Android me avisa al instalar el APK?**
+Porque la app no está distribuida a través de Google Play. Ese aviso aparece con cualquier APK instalado manualmente y es completamente normal. No implica que la app sea peligrosa.
 
-## Estructura del proyecto
+**¿Las fotos conservadas desaparecen para siempre de la app?**
+No. Desde Ajustes puedes configurar cuántos meses tardan en volver a aparecer (entre 1 y 24 meses). También puedes reiniciar la lista entera para que vuelvan todas de golpe.
 
-```
-SwipeCleaner/
-├── app/
-│   ├── build.gradle.kts
-│   └── src/main/
-│       ├── AndroidManifest.xml
-│       ├── java/com/swipecleaner/app/
-│       │   ├── MainActivity.kt
-│       │   ├── SwipeCleanerApplication.kt
-│       │   ├── data/             (Room, MediaStore, DataStore)
-│       │   ├── ui/
-│       │   │   ├── components/   (SwipeableCard)
-│       │   │   ├── screens/      (Swipe, Trash, Settings, Permissions)
-│       │   │   ├── theme/        (colores, tipografía, theme)
-│       │   │   └── viewmodel/    (ViewModels)
-│       │   └── utils/
-│       └── res/                  (recursos XML)
-├── .github/workflows/build.yml   (CI de GitHub Actions)
-├── build.gradle.kts
-├── settings.gradle.kts
-└── gradle.properties
-```
+**¿Funciona en iPhone?**
+No. SwipeCleaner es una aplicación nativa Android y no está disponible para iOS.
 
-## Iteraciones futuras
+---
 
-Para modificar la app, edita los archivos directamente desde la web de GitHub (botón del lápiz arriba a la derecha en cada archivo). Cada commit dispara automáticamente una nueva compilación. Descarga el nuevo APK desde Actions e instálalo encima del anterior.
+## Licencia
 
-Si quieres firmar el APK para subirlo a Google Play, habría que añadir un keystore y un paso adicional al workflow. Para uso personal, el APK de debug es suficiente.
+Proyecto de uso personal. Puedes modificarlo y redistribuirlo libremente.
