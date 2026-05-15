@@ -115,7 +115,7 @@ private fun SwipeContent(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "${state.currentIndex + 1} de ${state.photos.size}",
+            text = "Foto ${state.currentIndex + 1} de ${state.photos.size} · ${Formatters.bytesToHuman(state.currentPhoto?.sizeBytes ?: 0)}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
