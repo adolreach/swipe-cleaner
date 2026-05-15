@@ -10,7 +10,7 @@ SwipeCleaner te muestra tus fotos una a una. Desliza a la derecha para conservar
 
 ### Paso 1 — Descarga el APK
 
-Ve a la sección **[Releases](../../releases)** de este repositorio (columna derecha de la página principal) y descarga el archivo `app-debug.apk` de la última versión disponible.
+Ve a la sección **[Releases](../../releases)** de este repositorio (columna derecha de la página principal) y descarga el archivo `SwapCleaner.apk` de la última versión disponible.
 
 > Si no ves la sección Releases, ve directamente a:
 > `https://github.com/adolreach/swipe-cleaner/releases`
