@@ -62,7 +62,8 @@ class SwipeViewModel(
             val excluded = swipeRepo.getExcludedIds(prefs.reappearAfterMillis)
             val photos = mediaRepo.queryPhotos(
                 excludedIds = excluded,
-                bucketId = prefs.selectedBucketId
+                bucketId = prefs.selectedBucketId,
+                limit = Int.MAX_VALUE
             )
             _state.update {
                 it.copy(
